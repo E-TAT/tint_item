@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------------------------
------------------------------------- BY TAT if you delete this line i will cry XD ------------------------------------------------
+-------------------------------------------------------- BY TAT ------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------
 ESX = nil
 
@@ -123,20 +123,36 @@ local function isPlayerInRange(coords1, coords2, range)
 	return (Vdist2(coords1.x, coords1.y, coords1.z, coords2.x, coords2.y, coords2.z) < range)
 end
 
+local started = false;
+Citizen.CreateThread(function()	
+	while true do	
+		Citizen.Wait(5000)
+		PlayerData = ESX.GetPlayerData()
+		started = true;
+	end
+end)
+
 Citizen.CreateThread(function()	
 	while true do	
 		Citizen.Wait(0)
-		PlayerData = ESX.GetPlayerData()
-		if PlayerData.job and PlayerData.job.name == Config.job then
-			DrawMarker(22, Config.Shop.shopCoordinates.x, Config.Shop.shopCoordinates.y, Config.Shop.shopCoordinates.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.Shop.zoneSize.x, Config.Shop.zoneSize.y, Config.Shop.zoneSize.z, Config.Shop.zoneColor.r, Config.Shop.zoneColor.g, Config.Shop.zoneColor.b, Config.Shop.zoneColor.a, false, true, 2, false, false, false, false)
-			if isPlayerInRange(GetEntityCoords(PlayerPedId()), Config.Shop.shopCoordinates, Config.Shop.zoneSize.x) then
-				SetTextComponentFormat('STRING')
-				AddTextComponentString("Press ~INPUT_CONTEXT~ to Open Tint Shop")
-				DisplayHelpTextFromStringLabel(0, 0, 1, -1)
-				if IsControlJustReleased(1, 38) then
-					OpenTintMenu()
+		if started and PlayerData.job and PlayerData.job.name == Config.job then
+			if isPlayerInRange(GetEntityCoords(PlayerPedId()), Config.Shop.shopCoordinates, 60) then
+				DrawMarker(22, Config.Shop.shopCoordinates.x, Config.Shop.shopCoordinates.y, Config.Shop.shopCoordinates.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.Shop.zoneSize.x, Config.Shop.zoneSize.y, Config.Shop.zoneSize.z, Config.Shop.zoneColor.r, Config.Shop.zoneColor.g, Config.Shop.zoneColor.b, Config.Shop.zoneColor.a, false, true, 2, false, false, false, false)
+				if isPlayerInRange(GetEntityCoords(PlayerPedId()), Config.Shop.shopCoordinates, Config.Shop.zoneSize.x) then
+					SetTextComponentFormat('STRING')
+					AddTextComponentString("Press ~INPUT_CONTEXT~ to Open Tint Shop")
+					DisplayHelpTextFromStringLabel(0, 0, 1, -1)
+					if IsControlJustReleased(1, 38) then
+						OpenTintMenu()
+					end
+				else
+					Citizen.Wait(1000)
 				end
+			else
+				Citizen.Wait(1000)
 			end
+		else
+			Citizen.Wait(5000)
 		end
 	end
 end)
